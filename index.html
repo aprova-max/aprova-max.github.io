@@ -1,0 +1,770 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+/* Seletor de avatar do login */
+.avatar-pick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;width:100%;margin:6px 0 2px}
+.avatar-choice{position:relative;border:2px solid var(--line-strong);background:var(--bg);border-radius:16px;padding:5px;cursor:pointer;transition:.18s ease;min-width:0}
+.avatar-choice img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:11px}
+.avatar-choice[aria-pressed="true"]{border-color:#00d46a;box-shadow:0 0 0 2px #00d46a55,0 0 20px #00d46a55;transform:translateY(-2px)}
+.avatar-choice .avatar-check{position:absolute;right:-5px;top:-7px;width:23px;height:23px;border-radius:50%;background:#00c878;color:#07130d;display:none;align-items:center;justify-content:center;font-weight:900;border:2px solid var(--bg)}
+.avatar-choice[aria-pressed="true"] .avatar-check{display:flex}
+
+.login-card{max-width:560px}
+.login-card .field{text-align:left}
+@media(max-width:480px){.avatar-pick{gap:6px}.avatar-choice{padding:3px;border-radius:12px}.login-card{padding:26px 16px}}
+
+.profile-avatar{width:42px;height:42px;border:2px solid #00c878;border-radius:50%;overflow:hidden;flex:0 0 42px;box-shadow:0 0 12px #00c87855;margin-left:auto}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+header.top{gap:10px;justify-content:flex-start}
+@media(max-width:520px){.profile-avatar{width:36px;height:36px;flex-basis:36px;margin-left:auto}.top{gap:8px}.toggle{padding:8px 10px}}
+</style></head><body>
+<title>APROVA MAX — Preparação para o DETRAN-CE</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#00c878">
+<meta name="description" content="Treine para a prova teórica do DETRAN-CE com simulados, revisão por matéria e acompanhamento de desempenho.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: coluna única de 960px, cabeçalho com logo + tema, abas (Simulado, Histórico, Evolução), faixa de obra em listras pretas e amarelas. O amarelo é fixo nos dois temas; só o resto troca. */
+:root{
+  --bg:#FFFFFF; --surface:#F4F4F4; --surface-2:#E8E8E8; --fg:#0B0B0A; --muted:#555555;
+  --line:#D8D8D8; --line-strong:#0B0B0A;
+  --accent:#00C878; --on-accent:#0B0B0A; --accent-ink:#0B0B0A; --focus:#0B0B0A;
+  --good:#17703A; --bad:#B3261E; --good-bg:#E2F3E7; --bad-bg:#FBE4E1;
+  --f-display:'Barlow Condensed','Arial Narrow',Impact,sans-serif;
+  --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#090909; --surface:#171717; --surface-2:#242424; --fg:#F5F5F5; --muted:#B5B5B5;
+    --line:#333333; --line-strong:#F5F5F5; --accent-ink:#00C878; --focus:#00C878;
+    --good:#5BD686; --bad:#FF7A6E; --good-bg:#12301D; --bad-bg:#3A1714; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#090909; --surface:#171717; --surface-2:#242424; --fg:#F5F5F5; --muted:#B5B5B5;
+  --line:#333333; --line-strong:#F5F5F5; --accent-ink:#00C878; --focus:#00C878;
+  --good:#5BD686; --bad:#FF7A6E; --good-bg:#12301D; --bad-bg:#3A1714; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--f-body); font-size:16px; line-height:1.5;
+  padding-block:20px 40px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--f-display);text-transform:uppercase;letter-spacing:.015em;line-height:1.02;margin:0;text-wrap:balance;font-weight:800}
+h1{font-size:clamp(2.3rem,7vw,4rem)}
+h2{font-size:clamp(1.6rem,4.5vw,2.2rem)}
+h3{font-size:1.25rem;font-weight:700}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:4px}
+
+/* cabeçalho */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.brand svg{flex:none;width:46px;height:46px}
+.wm{font-family:var(--f-display);font-weight:800;font-size:1.9rem;letter-spacing:.03em;line-height:1;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.wm .max{background:var(--accent);color:var(--on-accent);padding:2px 7px 1px;transform:skew(-8deg);display:inline-block;border-radius:3px}
+.tag{font-size:.78rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.toggle{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);color:var(--fg);padding:8px 12px;border-radius:999px;font-weight:600;font-size:.9rem}
+.toggle svg{width:18px;height:18px}
+.hazard{height:10px;border-radius:2px;background:repeating-linear-gradient(-45deg,#00C878 0 12px,#0B0B0A 12px 24px)}
+.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--surface);padding:6px;border-radius:12px;border:1px solid var(--line)}
+.nav a{text-align:center;text-decoration:none;padding:10px 6px;border-radius:8px;font-family:var(--f-display);font-weight:700;font-size:1.15rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.nav a[aria-current="page"]{background:var(--accent);color:var(--on-accent)}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid transparent;border-radius:10px;padding:12px 20px;font-family:var(--f-display);font-weight:800;font-size:1.2rem;letter-spacing:.05em;text-transform:uppercase;line-height:1.1}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(.95)}
+.btn.ghost{background:transparent;border-color:var(--line-strong);color:var(--fg)}
+.btn.ghost:hover{background:var(--surface)}
+.btn.small{padding:8px 14px;font-size:1rem}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+
+/* início */
+.hero{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.hero p{color:var(--muted);max-width:52ch;margin-top:12px;font-size:1.05rem}
+.sign{position:relative;background:var(--accent);color:var(--on-accent);border-radius:16px;padding:22px 26px;text-align:center;min-width:170px}
+.sign::after{content:"";position:absolute;inset:6px;border:2px solid #0B0B0A;border-radius:11px;pointer-events:none}
+.sign b{display:block;font-family:var(--f-display);font-size:3.6rem;font-weight:800;line-height:1}
+.sign span{display:block;font-size:.85rem;font-weight:600;line-height:1.25;margin-top:4px}
+.modes{display:flex;flex-direction:column;gap:14px}
+.mode{display:grid;grid-template-columns:auto 1fr auto;gap:10px 28px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 28px}
+.mode.main{border-left:8px solid var(--accent)}
+.mode .mnum{font-family:var(--f-display);font-weight:800;font-size:4.4rem;line-height:.9;font-variant-numeric:tabular-nums;text-align:center;min-width:2.2ch}
+.mode .mnum small{display:block;font-family:var(--f-body);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.mode p{color:var(--muted);margin-top:4px;max-width:52ch}
+.hello{font-weight:600;color:var(--muted);margin-bottom:6px}
+.hello b{color:var(--fg)}
+.link{background:none;border:0;padding:0;margin-left:6px;text-decoration:underline;color:var(--muted);font-weight:600;font-size:.9rem}
+.hhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+body.gate .nav,body.gate .foot{display:none}
+.login,.splash{min-height:52vh;display:grid;place-items:center;padding-block:4vh}
+.login-card{width:100%;max-width:460px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:34px 28px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.login-card svg{width:84px;height:84px}
+.login-card form{width:100%;display:flex;flex-direction:column;gap:12px}
+.field{font:inherit;font-size:1.2rem;font-weight:600;padding:14px 16px;border-radius:12px;border:2px solid var(--line-strong);background:var(--bg);color:var(--fg);width:100%;text-align:center}
+.field::placeholder{color:var(--muted);font-weight:400}
+.err{color:var(--bad);font-weight:600;min-height:1.4em;font-size:.95rem}
+.splash{align-content:center;justify-items:center;gap:16px;text-align:center}
+.splash svg{width:130px;height:130px}
+.splash .chk{stroke-dasharray:1;stroke-dashoffset:0}
+.splash-txt{font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:clamp(2.2rem,8vw,3.6rem);line-height:1}
+.splash-txt b{background:var(--accent);color:var(--on-accent);padding:0 10px;display:inline-block;transform:skew(-8deg);border-radius:3px;overflow-wrap:anywhere}
+.splash .sub{color:var(--muted)}
+.splash .load{width:min(320px,80%);height:10px;border-radius:999px;overflow:hidden;background:var(--surface-2)}
+.splash .load i{display:block;height:100%;width:100%;background:repeating-linear-gradient(-45deg,#00C878 0 12px,#0B0B0A 12px 24px)}
+@media (prefers-reduced-motion:no-preference){
+  .splash .dia{animation:pop .7s cubic-bezier(.2,1.4,.4,1) both;transform-origin:center}
+  .splash .chk{stroke-dashoffset:1;animation:draw .5s .55s ease-out forwards}
+  .splash-txt{animation:rise .6s .75s ease-out both}
+  .splash .sub{animation:rise .6s .95s ease-out both}
+  .splash .load i{width:0;animation:fill 1s .9s ease-in-out forwards}
+  .login-card{animation:rise .5s ease-out both}
+  #app.enter{animation:rise .5s ease-out both}
+  @keyframes pop{from{transform:scale(.2) rotate(-90deg);opacity:0}to{transform:none;opacity:1}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes fill{to{width:100%}}
+}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card .meta{color:var(--muted);font-size:.95rem}
+.card .big{font-family:var(--f-display);font-weight:800;font-size:3rem;line-height:1}
+.progress-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{border-left:4px solid var(--accent);padding:4px 0 4px 12px}
+.stat b{display:block;font-family:var(--f-display);font-size:2rem;font-weight:800;line-height:1.1}
+.stat span{color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+
+/* simulado */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.qcount{font-family:var(--f-display);font-weight:800;font-size:1.5rem;letter-spacing:.03em;text-transform:uppercase}
+.topic{background:var(--surface-2);border-radius:999px;padding:3px 12px;font-size:.8rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.bar{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.qtext{font-size:clamp(1.15rem,3.4vw,1.45rem);font-weight:600;line-height:1.35;text-wrap:pretty;max-width:60ch}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:14px;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+.opt .ltr{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:8px;background:var(--surface-2);font-family:var(--f-display);font-weight:800;font-size:1.2rem}
+.opt .tx{padding-top:3px;min-width:0;overflow-wrap:anywhere}
+.opt:hover{border-color:var(--line-strong)}
+.opt.sel{background:var(--accent);border-color:#0B0B0A;color:var(--on-accent)}
+.opt.sel .ltr{background:#0B0B0A;color:var(--accent)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.actions .grp{display:flex;gap:14px;flex-wrap:wrap}
+.go .btn{margin-bottom:2px}
+.notice button{min-width:112px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}
+.grid button{aspect-ratio:1/1;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-weight:600;font-variant-numeric:tabular-nums}
+.grid button.done{background:var(--surface-2);border-color:var(--line-strong)}
+.grid button.cur{background:var(--accent);color:var(--on-accent);border-color:#0B0B0A}
+.notice{background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+
+/* resultado */
+.score{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.score .n{font-family:var(--f-display);font-weight:800;font-size:clamp(4rem,16vw,7rem);line-height:.9;font-variant-numeric:tabular-nums}
+.score .n small{font-size:.4em;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-weight:700;font-size:.85rem;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.pill.ok{background:var(--good-bg);color:var(--good)}
+.pill.no{background:var(--bad-bg);color:var(--bad)}
+.pill.flat{background:var(--surface-2);color:var(--fg)}
+.pill.warn{background:var(--accent);color:var(--on-accent)}
+.rows{display:flex;flex-direction:column;gap:10px}
+.trow{display:grid;grid-template-columns:minmax(120px,1.2fr) 3fr auto;gap:12px;align-items:center}
+.trow .nm{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.trow .pc{font-variant-numeric:tabular-nums;font-weight:700;min-width:5.5ch;text-align:right}
+.rev{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.rev .l{font-size:.9rem}
+.rev .l b{font-weight:700}
+.wrong{color:var(--bad)}
+.right{color:var(--good)}
+.exp{color:var(--muted);font-size:.92rem;border-top:1px dashed var(--line);padding-top:8px}
+
+/* histórico */
+.hist{display:flex;flex-direction:column;gap:10px}
+details.h{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+details.h summary{list-style:none;cursor:pointer;padding:14px;display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center}
+details.h summary::-webkit-details-marker{display:none}
+.hmain{display:flex;flex-direction:column;gap:2px;min-width:0}
+.hmain b{font-family:var(--f-display);font-size:1.6rem;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.hmain span{color:var(--muted);font-size:.9rem}
+.hside{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+details.h .body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
+
+/* evolução */
+.cards3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.evo b{font-family:var(--f-display);font-size:2.6rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.evo .lbl{color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.chartbox{overflow-x:auto}
+.chartbox svg{width:100%;min-width:420px;height:auto;display:block}
+.ax{fill:var(--muted);font:12px var(--f-body)}
+.axb{fill:var(--fg);font:700 12px var(--f-body)}
+.vl{fill:var(--fg);font:700 12px var(--f-body)}
+.empty{text-align:center;padding:36px 16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.foot{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:14px;max-width:70ch}
+.goal-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.personal-rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}.personal-rank li{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.personal-rank li:last-child{border:0}.personal-rank li span:nth-child(2){font-weight:600;min-width:0}.personal-rank small{display:block;color:var(--muted);font-weight:400;font-size:.8rem}.personal-rank li>b{font-variant-numeric:tabular-nums;text-align:right}.rankpos{font-family:var(--f-display);font-weight:800;font-size:1.35rem;color:var(--accent-ink)}.learn-panel{border-color:var(--accent)}
+
+.btn.big{width:100%;padding:16px 20px;font-size:1.45rem}
+.go{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.hint{color:var(--muted);font-size:.9rem;text-align:center}
+.quitrow{border-top:1px solid var(--line);padding-top:18px;margin-top:20px;display:flex;justify-content:flex-start}
+.pts{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:8px}
+details.study .body{gap:14px}
+details.study .body h3{margin-top:6px}
+.linkbtn{color:var(--fg);font-weight:700}
+@media (max-width:560px){
+  .hero{grid-template-columns:1fr}
+  .sign{justify-self:start}
+  .wm{font-size:1.6rem}
+  .mode{grid-template-columns:auto 1fr;padding:18px}
+  .mode .btn{grid-column:1 / -1}
+  .mode .mnum{font-size:3.2rem}
+  .nav a{font-size:1rem;padding:10px 2px;letter-spacing:.02em}
+  .brand svg{width:40px;height:40px}
+  .toggle span{display:none}
+  .trow{grid-template-columns:1fr auto;gap:6px 12px}
+  .trow .bar{grid-column:1 / -1;order:3}
+}
+/* acessibilidade e estados de interação */
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+button:disabled{opacity:.48;cursor:not-allowed;transform:none}
+button,.btn,a,summary{-webkit-tap-highlight-color:transparent}
+.opt{width:100%;cursor:pointer}
+.nav a[aria-current="page"]{font-weight:800}
+.storage-alert{margin:12px 0;padding:12px 14px;border:1px solid #b7791f;border-radius:10px;background:#fff8e6;color:#603d08;font-size:.92rem;line-height:1.45}
+@media (prefers-reduced-motion:no-preference){
+  .bar>i{transition:width .3s}
+  .btn,.opt,.nav a{transition:background-color .15s, border-color .15s, transform .15s}
+  .btn:hover:not(:disabled),.opt:hover{transform:translateY(-1px)}
+}
+@media(max-width:380px){.avatar-pick{grid-template-columns:repeat(4,minmax(0,1fr))}.mode{gap:10px}.sign{width:100%}}
+/* Ajustes de celular: toque confortável, cabeçalho compacto e navegação sem apertar os rótulos. */
+@media(max-width:560px){
+  body{font-size:15px;padding-top:12px;padding-bottom:24px}
+  .wrap{gap:14px}
+  .top{min-width:0}
+  .brand{gap:7px;flex:0 1 auto}
+  .brand svg{width:34px;height:34px}
+  .wm{font-size:1.38rem;gap:4px}
+  .tag{font-size:.58rem;letter-spacing:.025em}
+  .profile-avatar{width:34px;height:34px;flex-basis:34px}
+  .toggle{padding:7px 9px;gap:5px}
+  .nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+  .nav a{padding:9px 5px;font-size:1rem}
+  .card,.login-card{padding:16px}
+  .progress-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat b{font-size:1.7rem}
+  .trow{grid-template-columns:minmax(0,1fr) auto;gap:5px 8px}
+  .trow .bar{grid-column:1/-1;grid-row:2}
+  .trow .pc{grid-column:2;grid-row:1}
+  .actions,.actions .grp{width:100%;gap:8px}
+  .actions .btn,.go .btn{width:100%}
+  .notice{align-items:stretch}
+  .foot{font-size:.8rem}
+}
+@media(max-width:360px){.tag{max-width:145px;white-space:normal;line-height:1.1}.wm{font-size:1.22rem}.top{gap:6px}.profile-avatar{width:30px;height:30px;flex-basis:30px}.toggle{padding:6px 8px}}
+
+</style>
+
+<div class="wrap" id="top">
+  <header class="top">
+    <a class="brand" href="#simulado" aria-label="APROVA MAX, início">
+      <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
+        <rect x="8.5" y="8.5" width="31" height="31" rx="5" transform="rotate(45 24 24)" fill="#0B0B0A" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <rect x="11.5" y="11.5" width="25" height="25" rx="3" transform="rotate(45 24 24)" fill="#00C878"/>
+        <path d="M15.5 25 L21.5 31 L33 18" fill="none" stroke="#0B0B0A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+        <span class="wm">APROVA<span class="max">MAX</span></span>
+        <span class="tag">Detran-CE 2026 · Categorias A e B</span>
+      </span>
+    </a>
+    <div id="profileAvatar" class="profile-avatar" aria-label="Avatar escolhido" title="Seu avatar" hidden></div>
+    <button class="toggle" id="themeBtn" data-act="theme" type="button" aria-label="Alternar tema claro e escuro">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+      <span id="themeTxt">Tema</span>
+    </button>
+  </header>
+  <div class="hazard" aria-hidden="true"></div>
+  <nav class="nav" aria-label="Seções">
+    <a href="#simulado" data-r="simulado">Simulado</a>
+    <a href="#estudo" data-r="estudo">Estudo</a>
+    <a href="#historico" data-r="historico">Histórico</a>
+    <a href="#evolucao" data-r="evolucao">Evolução</a>
+  </nav>
+  <main id="app"></main>
+  <noscript><p class="storage-alert">Ative o JavaScript no navegador para usar os simulados e acompanhar seu progresso.</p></noscript>
+  <footer class="foot">
+    Treino preparatório baseado no CTB e nas regras nacionais vigentes em 2026: o exame teórico tem 30 questões e exige no mínimo 20 acertos, conforme a Resolução CONTRAN nº 1.020/2025. Este site não é oficial do DETRAN-CE e não reproduz nem garante as questões da prova. O banco é autoral, baseado no CTB e em normas nacionais; não é o Banco Nacional de Questões nem reproduz questões oficiais do exame. Nome, avatar, meta diária e histórico ficam salvos localmente neste navegador; não há contas, sincronização ou ranking público. Limpar os dados do site pode apagá-los. Fontes para consulta: <a href="https://www.ce.gov.br/detran/legislacao/" target="_blank" rel="noopener noreferrer">legislação do DETRAN-CE</a> e <a href="https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/Resolucao10202025.pdf" target="_blank" rel="noopener noreferrer">Resolução CONTRAN nº 1.020/2025</a>.
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* matérias no mesmo recorte da prova teórica do Detran-CE */
+var TEMAS={H:"Processo de habilitação",I:"Infrações e penalidades",C:"Circulação e conduta",S:"Sinalização de trânsito",D:"Direção defensiva",P:"Primeiros socorros",M:"Cidadania e meio ambiente",X:"Mecânica básica"};
+var RETAG={1:"C",2:"C",3:"C",4:"I",5:"H",6:"H",7:"H",8:"H",9:"C",10:"C",11:"C",12:"C",13:"C",14:"C",15:"C",16:"C",17:"I",18:"I",19:"C",20:"I",49:"C",50:"C",59:"C",60:"C"};
+
+/* [tema, pergunta, opções, índice da correta, explicação] — novas questões entram sempre no fim */
+var RAW=[
+["L","Em via urbana local, sem placa de velocidade, qual é o limite máximo?",["20 km/h","30 km/h","40 km/h","60 km/h"],1,"Sem sinalização, o CTB fixa 30 km/h em via local, 40 km/h em coletora, 60 km/h em arterial e 80 km/h em via de trânsito rápido."],
+["L","Qual a velocidade máxima em via arterial urbana sem placa de velocidade?",["40 km/h","50 km/h","60 km/h","80 km/h"],2,"Via arterial: 60 km/h quando não há placa indicando outro limite."],
+["L","E em via de trânsito rápido urbana, sem placa de velocidade?",["60 km/h","70 km/h","90 km/h","80 km/h"],3,"Via de trânsito rápido: 80 km/h."],
+["L","Quantos pontos valem as infrações leve, média, grave e gravíssima, nessa ordem?",["3, 4, 5 e 7","2, 4, 6 e 8","3, 5, 7 e 9","1, 3, 5 e 7"],0,"Leve 3, média 4, grave 5 e gravíssima 7 pontos."],
+["L","Para condutor com menos de 50 anos, a validade da CNH é de:",["3 anos","5 anos","10 anos","15 anos"],2,"São 10 anos até os 49. De 50 a 69 anos, 5 anos. A partir dos 70, 3 anos."],
+["L","A Permissão para Dirigir (PPD) tem validade de:",["6 meses","1 ano","2 anos","3 anos"],1,"Após 1 ano sem infração grave ou gravíssima e sem reincidência em média, o condutor recebe a CNH definitiva."],
+["L","A categoria B habilita a dirigir veículos com peso bruto total (PBT) de até:",["2.500 kg","3.000 kg","3.500 kg","4.500 kg"],2,"Até 3.500 kg de PBT e lotação de até 8 lugares, sem contar o condutor."],
+["L","A categoria A habilita a conduzir:",["Automóveis e utilitários","Veículos motorizados de duas ou três rodas","Caminhões e ônibus","Somente tratores"],1,"Categoria A: veículos motorizados de duas ou três rodas, com ou sem carro lateral."],
+["L","O uso do cinto de segurança é obrigatório para:",["Somente o condutor","Condutor e passageiro do banco da frente","Condutor e todos os passageiros, em todas as vias","Somente quem viaja em rodovias"],2,"O cinto é obrigatório para todos os ocupantes, em qualquer via."],
+["L","Crianças menores de 10 anos que ainda não atingiram 1,45 m devem ser transportadas:",["No banco da frente, com cinto de adulto","No banco traseiro, em dispositivo de retenção adequado","No colo de um adulto, no banco traseiro","Em qualquer banco, se estiverem acompanhadas"],1,"O CTB exige o banco traseiro e o dispositivo de retenção (bebê conforto, cadeirinha ou assento de elevação) adequado à idade, peso e altura."],
+["L","Sobre o capacete, condutor e passageiro de motocicleta devem:",["Usar somente em rodovias","Usar somente o condutor","Usar sempre, com o capacete afivelado","Usar somente à noite"],2,"O capacete é obrigatório para condutor e passageiro, e precisa estar devidamente afivelado."],
+["L","Como regra, a ultrapassagem deve ser feita:",["Pela direita","Pela esquerda, sinalizando com a luz indicadora de direção","Pelo acostamento","Por qualquer lado onde houver espaço"],1,"A ultrapassagem é pela esquerda, com sinalização prévia e só quando a via livre à frente permitir."],
+["L","Em uma rotatória sem sinalização, tem preferência quem:",["Vai entrar nela","Está circulando nela","Dirige o veículo maior","Está com mais pressa"],1,"Na rotatória, a preferência é de quem já está circulando por ela."],
+["L","Em cruzamento sem sinalização, quando nenhum fluxo vem de rodovia ou rotatória, a preferência é de quem vem:",["Pela esquerda do condutor","Do veículo mais pesado","Do veículo mais veloz","Pela direita do condutor"],3,"Nos demais casos, passa primeiro o veículo que vem pela direita do condutor."],
+["L","Em rodovia de pista simples fora do perímetro urbano, durante o dia, um automóvel sem luz de rodagem diurna (DRL) deve circular com:",["Somente as lanternas","A luz alta","Os faróis apagados","O farol baixo aceso"],3,"O CTB exige luz baixa durante o dia em rodovias de pista simples situadas fora do perímetro urbano para veículos sem luz de rodagem diurna (CTB, art. 40, § 2º)."],
+["L","Em faixa de pedestres sem semáforo, com pedestre atravessando, o condutor deve:",["Buzinar e acelerar","Passar rápido pela esquerda","Parar e dar passagem","Reduzir e passar na frente dele"],2,"O pedestre na faixa tem preferência. Não dar passagem é infração gravíssima."],
+["L","Avançar o sinal vermelho do semáforo é infração:",["Leve","Média","Grave","Gravíssima"],3,"Avançar o sinal vermelho é infração gravíssima, de 7 pontos."],
+["L","Dirigir sem possuir CNH, Permissão ou ACC é infração:",["Leve","Gravíssima","Média","Grave"],1,"É infração gravíssima, com retenção do veículo."],
+["L","A buzina deve ser usada:",["Para cumprimentar outros condutores","Somente para advertências necessárias a evitar acidentes","Livremente nos cruzamentos","Sempre à noite, ao passar por pedestres"],1,"Pelo CTB, a buzina serve apenas para advertências que evitem acidentes e, fora de área urbana, para ultrapassagens."],
+["L","Quem dirige sob influência de álcool está sujeito a:",["Apenas advertência por escrito","Multa e suspensão do direito de dirigir","Somente multa leve","Nada, se tiver CNH há mais de 5 anos"],1,"É infração gravíssima, com multa e suspensão do direito de dirigir. A recusa ao teste também é penalizada."],
+["S","A placa R-1 (PARE), de parada obrigatória, tem formato:",["Octogonal, com fundo vermelho","Circular, com borda vermelha","Triangular, com fundo amarelo","Retangular, com fundo azul"],0,"A placa PARE é octogonal e vermelha."],
+["S","As placas de advertência têm, em geral, formato:",["Circular com fundo azul","Losango (quadrado) com fundo amarelo","Retangular com fundo verde","Octogonal com fundo vermelho"],1,"Advertência: forma quadrada em losango, fundo amarelo, símbolo e orla pretos."],
+["S","Uma placa circular com borda vermelha é de:",["Advertência","Indicação de destinos","Regulamentação","Serviços auxiliares"],2,"As placas de regulamentação, que impõem obrigações e proibições, são em geral circulares com borda vermelha."],
+["S","Linha dupla contínua amarela no centro da pista indica:",["Ultrapassagem livre nos dois sentidos","Ultrapassagem proibida nos dois sentidos","Fim da pista","Faixa de pedestres"],1,"Linha dupla contínua amarela separa fluxos opostos e proíbe a ultrapassagem nos dois sentidos."],
+["S","A linha branca tracejada na pista:",["Separa fluxos de sentidos opostos","Proíbe a ultrapassagem","Separa fluxos do mesmo sentido e permite a transposição","Indica parada obrigatória"],2,"Branca separa fluxos de mesmo sentido. Tracejada permite mudar de faixa com segurança."],
+["S","A luz amarela piscante (intermitente) do semáforo significa:",["Parada obrigatória","Passagem livre, sem atenção","Proibido seguir em frente","Atenção: prossiga com cuidado"],3,"O amarelo intermitente é um sinal de advertência: reduza e passe com cuidado."],
+["S","A luz amarela fixa do semáforo indica:",["Acelere para atravessar","Atenção: pare, salvo se isso comprometer a segurança","Siga normalmente","Pedestres podem atravessar"],1,"O amarelo avisa que o sinal vai fechar. O condutor deve parar, a menos que a frenagem ofereça risco."],
+["S","A placa triangular com vértice para baixo, borda vermelha e fundo branco determina:",["Parada obrigatória","Proibido estacionar","Velocidade máxima permitida","Dê a preferência"],3,"É a R-2, Dê a preferência."],
+["S","Ao ouvir a sirene de uma ambulância em serviço, o condutor deve:",["Acelerar para sair da frente","Manter-se parado no meio da via","Deslocar-se para a direita e parar, se necessário, dando passagem","Seguir logo atrás, colado ao veículo"],2,"Veículos de emergência com sirene e giroflex têm prioridade de passagem."],
+["D","Em pista molhada, o recomendado é:",["Aumentar a velocidade para sair logo da chuva","Reduzir a velocidade e aumentar a distância do veículo da frente","Frear forte e com frequência","Usar a luz alta"],1,"Na pista molhada a aderência cai e a frenagem leva mais espaço."],
+["D","Em caso de aquaplanagem, o condutor deve:",["Frear com força","Acelerar para recuperar a aderência","Puxar o freio de mão","Tirar o pé do acelerador e segurar o volante, sem freadas ou giros bruscos"],3,"Na aquaplanagem os pneus perdem contato com o solo. Movimentos bruscos pioram a perda de controle."],
+["D","Direção defensiva é dirigir de modo a:",["Chegar sempre mais rápido","Dirigir apenas durante o dia","Prever situações de risco e evitar acidentes, apesar dos erros dos outros e das condições adversas","Dirigir somente em rodovias"],2,"É a definição clássica de direção defensiva."],
+["D","Se o veículo enguiçar na via, o condutor deve sinalizar com:",["Somente a buzina","Triângulo de sinalização e pisca-alerta","Somente a luz alta","Nenhum sinal, se for rápido"],1,"Pisca-alerta e triângulo avisam os demais condutores com antecedência."],
+["D","Ao sentir sono dirigindo, o mais indicado é:",["Abrir a janela e continuar","Parar em local seguro e descansar","Aumentar o volume do som","Acelerar para chegar logo"],1,"Cansaço e sono reduzem os reflexos. A única solução segura é parar e descansar."],
+["D","A distância de frenagem aumenta com:",["Velocidade maior, pista molhada e pneus gastos","Pista seca e pneus novos","Veículo leve e velocidade baixa","Freios revisados e pista seca"],0,"Velocidade, piso escorregadio e pneus em mau estado alongam a distância necessária para parar."],
+["P","Qual é o telefone do SAMU?",["190","191","192","194"],2,"SAMU: 192. Polícia Militar: 190. PRF: 191. Bombeiros: 193."],
+["P","Qual é o telefone do Corpo de Bombeiros?",["190","192","191","193"],3,"Bombeiros: 193."],
+["P","Ao socorrer um motociclista acidentado, quanto ao capacete:",["Retirar imediatamente","Não retirar, salvo se for indispensável para liberar as vias aéreas","Sempre retirar para ele respirar melhor","Puxar com força para tirar rápido"],1,"Retirar o capacete pode agravar lesões na coluna cervical."],
+["P","A primeira atitude ao chegar a um acidente com vítimas é:",["Mover a vítima imediatamente","Sinalizar o local e acionar o socorro","Oferecer água à vítima","Remover os veículos da pista"],1,"Sinalize para evitar novos acidentes e chame o socorro antes de qualquer outra ação."],
+["P","Diante de uma hemorragia externa, deve-se:",["Comprimir o ferimento com um pano limpo","Aplicar pó de café ou terra","Lavar com álcool e deixar sangrar","Deixar a vítima caminhando"],0,"A compressão direta com pano limpo é a medida inicial para controlar o sangramento."],
+["M","O óleo lubrificante usado deve ser:",["Jogado no solo","Despejado no esgoto","Entregue em ponto de coleta apropriado","Queimado em terreno baldio"],2,"O óleo usado contamina solo e água. Deve ir para coleta e rerrefino."],
+["M","Fumaça preta saindo do escapamento indica:",["Motor em perfeito estado","Regulagem ou manutenção inadequada, que aumenta a poluição","Combustível de melhor qualidade","Pneus bem calibrados"],1,"Fumaça preta mostra combustão incompleta, e o veículo precisa de manutenção."],
+["M","Estacionar em vaga de idoso ou de pessoa com deficiência sem a credencial é:",["Permitido por poucos minutos","Permitido à noite","Permitido com o pisca-alerta ligado","Infração"],3,"A vaga especial exige a credencial. Estacionar sem ela é infração grave."],
+["M","Atirar lixo pela janela do veículo é:",["Infração, além de prejudicar o meio ambiente","Permitido se for papel","Permitido em rodovias","Permitido se for lixo orgânico"],0,"Atirar objetos ou substâncias do veículo é infração e agride o ambiente."],
+["X","A luz vermelha de óleo acesa no painel indica:",["Troca de óleo marcada para o mês que vem","Pressão do óleo baixa: parar e desligar o motor","Excesso de combustível","Falha no ar-condicionado"],1,"Pressão baixa de óleo pode fundir o motor. Pare em local seguro e desligue."],
+["X","A calibragem dos pneus deve ser feita:",["Com os pneus quentes","Com o veículo em movimento","Com os pneus frios","Somente quando o pneu furar"],2,"Pneus quentes mostram pressão maior que a real."],
+["X","A luz da bateria acesa no painel indica problema no:",["Sistema de carga elétrica","Sistema de freios","Nível do óleo","Airbag"],0,"Pode indicar falha do alternador ou da própria bateria."],
+["X","O sistema ABS serve para:",["Aumentar a velocidade máxima","Reduzir o consumo de combustível","Evitar o travamento das rodas na frenagem, mantendo o controle da direção","Substituir o freio de mão"],2,"Sem o travamento das rodas, o condutor continua conseguindo desviar durante a frenagem."],
+["A","Nas motocicletas, o farol baixo deve ficar:",["Aceso apenas à noite","Apagado durante o dia","Aceso durante o dia e a noite","Aceso apenas em rodovias"],2,"O CTB exige o farol aceso em motocicletas dia e noite."],
+["A","O condutor de motocicleta deve:",["Dirigir com uma mão só","Segurar o guidom com as duas mãos, salvo para fazer sinais de braço","Manter os pés fora dos apoios","Levar o passageiro à frente do condutor"],1,"Conduzir sem segurar o guidom com ambas as mãos é infração, exceto para sinais de braço."],
+["I","Dirigir em velocidade superior à máxima permitida em mais de 50% é infração:",["Leve, apenas com advertência","Média, com 4 pontos","Grave, sem suspensão","Gravíssima, com multa e suspensão do direito de dirigir"],3,"Passar mais de 50% do limite é infração gravíssima e leva à suspensão do direito de dirigir."],
+["I","Quem comete duas ou mais infrações gravíssimas em 12 meses pode ter o direito de dirigir suspenso ao atingir:",["10 pontos","20 pontos","30 pontos","40 pontos"],1,"O limite é de 20 pontos com duas ou mais gravíssimas, 30 com uma gravíssima e 40 sem nenhuma gravíssima, no período de 12 meses."],
+["I","Transportar criança sem o dispositivo de retenção adequado é infração:",["Leve","Média","Grave","Gravíssima"],3,"É infração gravíssima, e o veículo fica retido até a regularização."],
+["H","A idade mínima para se habilitar é de:",["16 anos","17 anos","18 anos completos","21 anos"],2,"O candidato precisa ser penalmente imputável, ou seja, ter 18 anos completos."],
+["D","O ajuste de banco, espelhos e cinto deve ser feito:",["Durante o trajeto, quando necessário","Antes de iniciar a viagem","Somente em viagens longas","Apenas quando houver passageiros"],1,"Com o veículo parado, o condutor garante posição e visão adequadas antes de sair."],
+["D","À noite, ao cruzar com outro veículo usando luz alta, o condutor deve:",["Manter a luz alta","Mudar para a luz baixa","Apagar os faróis","Ligar o pisca-alerta"],1,"A luz alta ofusca o outro condutor. Deve-se baixar a luz ao cruzar com outro veículo."],
+["D","Em caso de neblina, o condutor deve usar:",["Luz alta","Apenas as lanternas","Pisca-alerta durante todo o trajeto","Farol baixo e, se houver, farol de neblina"],3,"A luz alta reflete na neblina e reduz a visão. Use farol baixo e, se tiver, o de neblina."],
+["P","O telefone da Polícia Rodoviária Federal (PRF) é:",["190","191","192","193"],1,"PRF: 191."],
+["M","Qual gás, liberado na queima de combustíveis fósseis, mais contribui para o efeito estufa?",["Oxigênio","Dióxido de carbono (CO2)","Hélio","Nitrogênio puro"],1,"A queima de combustíveis fósseis libera CO2, principal gás do efeito estufa emitido por veículos."],
+["X","Para conferir o nível do óleo do motor, o veículo deve estar:",["Em subida, com o motor ligado","Em movimento","Em local plano e com o motor desligado há alguns minutos","Com o motor muito quente, logo após a viagem"],2,"Em piso plano e com o óleo já escorrido para o cárter, a leitura da vareta fica correta."],
+["H","Qual é a idade mínima para iniciar o processo de habilitação para CNH?",["16 anos","17 anos","18 anos completos","21 anos"],2,"O candidato deve ser penalmente imputável, o que exige 18 anos completos (CTB, art. 140)."],
+["H","Para obter a CNH, o candidato deve saber ler e escrever?",["Não, basta reconhecer placas","Sim, além de possuir documento de identidade e CPF","Somente para as categorias C, D e E","Apenas se fizer prova impressa"],1,"Saber ler e escrever é requisito legal para a habilitação (CTB, art. 140)."],
+["H","A Permissão para Dirigir é concedida ao novo condutor por quanto tempo?",["Seis meses","Um ano","Dois anos","Cinco anos"],1,"A PPD tem validade de um ano. Para receber a CNH definitiva, o permissionário não pode cometer infração grave ou gravíssima nem ser reincidente em infração média (CTB, art. 148)."],
+["H","Durante o período da Permissão para Dirigir, qual situação impede a obtenção da CNH definitiva?",["Cometer infração leve","Cometer infração grave","Dirigir em rodovia","Estacionar em local permitido"],1,"A prática de infração grave ou gravíssima, ou reincidência em infração média, impede a concessão da CNH definitiva (CTB, art. 148, § 3º)."],
+["H","A categoria B permite conduzir veículo motorizado cujo peso bruto total não exceda:",["2.000 kg","3.000 kg","3.500 kg","6.000 kg"],2,"A categoria B abrange veículo com PBT de até 3.500 kg e lotação de até oito lugares, excluído o do motorista (CTB, art. 143)."],
+["I","Estacionar sobre faixa de pedestres é infração de natureza:",["Leve","Média","Grave","Gravíssima"],2,"Estacionar sobre faixa destinada a pedestres é infração grave (CTB, art. 181, VIII)."],
+["I","Dirigir usando telefone celular segurando ou manuseando o aparelho é infração:",["Leve","Média","Grave","Gravíssima"],3,"Segurar ou manusear telefone celular ao dirigir é infração gravíssima (CTB, art. 252, parágrafo único)."],
+["I","Deixar de usar o cinto de segurança é infração:",["Leve","Média","Grave","Gravíssima"],2,"Deixar condutor ou passageiro de usar o cinto é infração grave (CTB, art. 167)."],
+["I","Transitar com o veículo pelo acostamento, salvo situações permitidas, constitui infração:",["Leve","Média","Grave","Gravíssima"],3,"Transitar pelo acostamento é infração gravíssima (CTB, art. 193)."],
+["I","Avançar o sinal vermelho do semáforo ou o de parada obrigatória, salvo onde houver sinalização que permita a conversão livre à direita, é infração:",["Leve","Média","Grave","Gravíssima"],3,"Avançar o sinal vermelho ou a parada obrigatória é infração gravíssima (CTB, art. 208)."],
+["C","Em uma via sem sinalização, a circulação deve ocorrer:",["Pelo lado esquerdo da via","Pelo lado direito, admitidas exceções devidamente sinalizadas","Pelo centro da pista em qualquer situação","Pelo acostamento"],1,"A circulação de veículos deve ocorrer pelo lado direito da via, salvo exceções devidamente sinalizadas (CTB, art. 29, I)."],
+["C","Ao aproximar-se de qualquer tipo de cruzamento, o condutor deve:",["Aumentar a velocidade","Manter a velocidade da via","Demonstrar prudência especial e transitar em velocidade moderada, podendo parar com segurança","Usar a buzina continuamente"],2,"O condutor deve demonstrar prudência especial ao aproximar-se de cruzamentos, em velocidade moderada (CTB, art. 44)."],
+["C","Em uma via com várias faixas no mesmo sentido, as da direita são destinadas, em regra:",["À ultrapassagem e aos veículos mais rápidos","Aos veículos mais lentos e de maior porte, quando não houver faixa especial","Exclusivamente a motocicletas","A estacionamento"],1,"Em vias com várias faixas no mesmo sentido, as da direita são destinadas aos veículos mais lentos e de maior porte, quando não houver faixa especial (CTB, art. 29, IV)."],
+["C","Antes de mudar de faixa ou realizar uma conversão, o condutor deve:",["Sinalizar com antecedência e verificar se a manobra é segura","Buzinar e iniciar a manobra imediatamente","Apenas reduzir a velocidade","Confiar somente nos espelhos"],0,"O condutor deve indicar com antecedência, por meio da luz indicadora de direção, o deslocamento lateral ou a conversão (CTB, art. 35)."],
+["C","Ao passar por um ciclista, o motorista deve guardar distância lateral mínima de:",["50 centímetros","1 metro","1,5 metro","2,5 metros"],2,"Ao ultrapassar bicicleta, deve ser mantida distância lateral de pelo menos 1,5 metro (CTB, art. 201)."],
+["S","A placa R-2, com formato triangular invertido, significa:",["Parada obrigatória","Dê a preferência","Proibido ultrapassar","Sentido proibido"],1,"A placa R-2 determina que o condutor dê a preferência aos veículos da via em que vai entrar ou cruzar."],
+["S","A placa R-6a indica:",["Proibido estacionar","Proibido parar e estacionar","Estacionamento regulamentado","Parada obrigatória"],0,"A placa R-6a proíbe o estacionamento no trecho sinalizado."],
+["S","A placa R-6c indica:",["Proibido estacionar","Proibido parar e estacionar","Sentido obrigatório","Dê a preferência"],1,"A placa R-6c proíbe parar e estacionar no trecho sinalizado."],
+["S","A placa de regulamentação R-19 informa:",["Proibição de ultrapassagem","Velocidade máxima permitida","Altura máxima permitida","Peso máximo permitido"],1,"A placa R-19 estabelece a velocidade máxima regulamentada para o trecho."],
+["S","A faixa de travessia de pedestres é normalmente demarcada na cor:",["Amarela","Branca","Azul","Vermelha"],1,"A sinalização horizontal de travessia de pedestres utiliza marcas brancas."],
+["D","Ao perceber que outro veículo está prestes a entrar na sua trajetória, a atitude defensiva é:",["Disputar a passagem","Acelerar para impedir a entrada","Reduzir e criar espaço para evitar a colisão","Fechar a passagem"],2,"A direção defensiva prioriza antecipação, redução de riscos e prevenção de conflitos no trânsito."],
+["D","Qual atitude ajuda a manter uma distância segura do veículo à frente?",["Dirigir muito próximo para evitar cortes","Usar um ponto fixo para contar intervalo de tempo e ampliá-lo em condições adversas","Olhar apenas para o veículo da frente","Frear somente quando o outro veículo frear"],1,"Manter intervalo de segurança permite reagir e frear; chuva, baixa visibilidade e maior velocidade exigem distância maior (CTB, art. 29, II)."],
+["D","Se um pneu estourar durante a condução, o motorista deve:",["Frear bruscamente","Segurar firme o volante, aliviar o acelerador e reduzir gradualmente","Virar rapidamente para o acostamento","Puxar imediatamente o freio de estacionamento"],1,"Movimentos bruscos podem causar perda de controle. Segure o volante e reduza a velocidade gradualmente até parar em local seguro."],
+["D","Ao dirigir sob chuva intensa, é recomendado:",["Aumentar a velocidade","Manter distância menor","Reduzir a velocidade, aumentar a distância e usar iluminação adequada","Ligar o pisca-alerta com o veículo em movimento"],2,"Chuva reduz a aderência e a visibilidade. Reduza a velocidade e aumente a distância de segurança."],
+["D","O que fazer ao se aproximar de uma escola em horário de entrada ou saída?",["Acelerar para liberar a via","Reduzir a velocidade e redobrar a atenção a crianças e pedestres","Buzinar continuamente","Ultrapassar veículos parados"],1,"Áreas escolares exigem velocidade moderada e atenção redobrada a usuários vulneráveis."],
+["P","Ao encontrar uma vítima de acidente consciente, a primeira atitude adequada é:",["Movimentá-la para a calçada","Oferecer água imediatamente","Proteger o local, acionar socorro e evitar movimentá-la sem necessidade","Retirar o capacete"],2,"Sinalize e proteja o local, acione o serviço de emergência e não movimente a vítima, salvo risco imediato."],
+["P","Em caso de hemorragia externa, se for seguro prestar o primeiro atendimento, deve-se:",["Aplicar pressão direta sobre o ferimento com pano limpo ou gaze","Lavar profundamente com combustível","Retirar objetos encravados","Dar medicamentos à vítima"],0,"A pressão direta com material limpo ajuda a controlar o sangramento. Acione o serviço de emergência."],
+["P","Ao presenciar um acidente com vítima, qual informação é importante ao ligar para o serviço de emergência?",["Somente seu nome","Local exato, número de vítimas e condições aparentes","A placa de todos os veículos da rua","A opinião sobre quem causou o acidente"],1,"Informe localização precisa, quantidade de vítimas, riscos existentes e estado aparente, seguindo as orientações do atendente."],
+["P","Uma vítima de acidente está inconsciente, mas respirando. O que se deve fazer?",["Oferecer água","Colocá-la em pé","Monitorar a respiração, acionar socorro e evitar movimentá-la desnecessariamente","Sacudi-la para acordar"],2,"Acione o socorro e monitore a respiração. Evite movimentar a vítima, pois pode haver lesão na coluna."],
+["P","Em acidente com motociclista, o capacete deve ser retirado por qualquer pessoa que chegue ao local?",["Sim, sempre","Não; a retirada inadequada pode agravar lesões, devendo aguardar equipe capacitada","Sim, se a vítima estiver consciente","Somente para facilitar a conversa"],1,"Não retire o capacete. A retirada deve ser feita por equipe treinada quando necessária para atendimento."],
+["M","Jogar lixo pela janela do veículo:",["É permitido em vias urbanas","É permitido em rodovias","Prejudica o ambiente e pode configurar infração","Só é proibido em parques"],2,"Atirar do veículo ou abandonar na via objetos ou substâncias é infração média (CTB, art. 172), além de causar riscos ambientais e viários."],
+["M","Uma atitude que reduz a poluição causada pelo veículo é:",["Manter o motor regulado e a manutenção em dia","Retirar o filtro de ar","Acelerar parado por longos períodos","Usar combustível de procedência duvidosa"],0,"A manutenção preventiva e o motor regulado ajudam a reduzir consumo e emissões."],
+["M","Para economizar combustível e reduzir emissões, o condutor deve:",["Acelerar e frear bruscamente","Manter pneus calibrados e conduzir de forma suave","Deixar o motor ligado durante longas paradas","Transportar peso desnecessário"],1,"Pneus calibrados, condução suave e retirada de peso desnecessário reduzem consumo e emissões."],
+["M","A poluição sonora no trânsito pode ser reduzida:",["Usando buzina sem necessidade","Mantendo escapamento irregular","Evitando buzinas e ruídos desnecessários e mantendo o veículo em boas condições","Acelerando em ponto morto"],2,"Evitar ruídos e manter o sistema de escapamento em condições adequadas contribui para o bem-estar coletivo."],
+["M","O respeito à faixa de pedestres representa:",["Uma escolha opcional do motorista","Uma atitude de cidadania e proteção aos usuários mais vulneráveis","Uma regra válida apenas em rodovias","Uma obrigação exclusiva dos pedestres"],1,"Respeitar a preferência do pedestre promove segurança viária e convivência cidadã (CTB, art. 70)."],
+["X","A função principal do sistema de arrefecimento é:",["Lubrificar os pneus","Manter a temperatura de funcionamento do motor dentro da faixa adequada","Aumentar a pressão dos freios","Carregar a bateria"],1,"O sistema de arrefecimento controla a temperatura do motor e evita superaquecimento."],
+["X","Se a temperatura do motor subir excessivamente, o condutor deve:",["Continuar até o destino","Parar em local seguro e desligar o motor, aguardando esfriar antes de qualquer verificação","Abrir imediatamente a tampa do reservatório quente","Jogar água fria no motor quente"],1,"Pare em local seguro e aguarde o motor esfriar. Nunca abra o reservatório pressurizado enquanto estiver quente."],
+["X","A profundidade mínima legal dos sulcos principais dos pneus, abaixo da qual são considerados em mau estado, é de:",["0,5 mm","1,0 mm","1,6 mm","3,0 mm"],2,"Pneus devem ter sulcos com profundidade mínima de 1,6 mm para circulação regular."],
+["X","O fluido de freio tem como função:",["Lubrificar o motor","Transmitir a força aplicada ao pedal para o sistema de freios","Resfriar o radiador","Aumentar a pressão dos pneus"],1,"O fluido transmite a pressão hidráulica do pedal aos mecanismos de frenagem."],
+["X","A luz de advertência do sistema de freios acesa no painel pode indicar:",["Porta aberta","Problema no sistema de freios ou nível baixo do fluido","Baixo nível do combustível","Falha no rádio"],1,"A luz pode indicar freio de estacionamento acionado, nível baixo de fluido ou falha. Verifique com segurança e procure assistência."],
+];
+var Q=RAW.map(function(r,i){return {id:i+1,t:RETAG[i+1]||r[0],q:r[1],o:r[2],a:r[3],e:r[4]};});
+var byId={}; Q.forEach(function(q){byId[q.id]=q;});
+var LET=["A","B","C","D"];
+
+/* armazenamento (por navegador) */
+var KEY="aprova-max-v2",storageWarn=false;
+function load(){
+  try{
+    var raw=localStorage.getItem(KEY),s=raw?JSON.parse(raw):{};
+    if(!s||typeof s!=="object"||Array.isArray(s))return {};
+    var clean={};
+    if(typeof s.name==="string")clean.name=s.name.slice(0,20);
+    if(Number.isInteger(s.avatar)&&s.avatar>=0&&s.avatar<=3)clean.avatar=s.avatar;
+    if(s.theme==="light"||s.theme==="dark")clean.theme=s.theme;
+    clean.dailyGoal=Number.isInteger(s.dailyGoal)&&s.dailyGoal>=1&&s.dailyGoal<=3?s.dailyGoal:1;
+    clean.history=Array.isArray(s.history)?s.history.filter(function(a){
+      return a&&typeof a==="object"&&Number.isFinite(a.id)&&Number.isFinite(a.ts)&&
+        Number.isInteger(a.total)&&a.total>0&&a.total<=30&&Number.isInteger(a.correct)&&
+        a.correct>=0&&a.correct<=a.total&&Array.isArray(a.ans);
+    }).slice(-100):[];
+    return clean;
+  }catch(e){storageWarn=true;return {history:[]};}
+}
+var store=load(); if(!Array.isArray(store.history)) store.history=[];
+if(!Number.isInteger(store.dailyGoal))store.dailyGoal=1;
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(store));storageWarn=false;return true;}
+  catch(e){storageWarn=true;return false;}
+}
+
+var session={exam:null,resultId:null,confirmClear:false,justCleared:false,stage:store.name?"app":"login"};
+var app=document.getElementById("app");
+
+/* utilidades */
+function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function fmtDate(ts){try{return new Date(ts).toLocaleString("pt-BR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
+function num(x,d){return x.toLocaleString("pt-BR",{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
+function modeName(a){if(a.mode==="completo")return "Simulado completo";if(a.mode==="tema")return "Treino: "+(TEMAS[a.tema]||"matéria");return "Treino rápido";}
+function passed(a){return a.total===30?a.correct>=20:a.correct/a.total>=0.7;}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function deltaPill(d){
+  var r=Math.round(d);
+  if(r>0) return '<span class="pill ok">▲ Melhorou +'+r+' pts</span>';
+  if(r<0) return '<span class="pill no">▼ Regrediu '+r+' pts</span>';
+  return '<span class="pill flat">= Estável</span>';
+}
+function topicStats(list){
+  var s={}; Object.keys(TEMAS).forEach(function(k){s[k]={n:0,ok:0};});
+  list.forEach(function(att){att.ans.forEach(function(p){var q=byId[p[0]];if(!q)return;s[q.t].n++;if(p[1]===q.a)s[q.t].ok++;});});
+  return s;
+}
+function localDay(ts){var d=new Date(ts);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function dayShift(day,amount){var p=day.split("-").map(Number),d=new Date(p[0],p[1]-1,p[2]);d.setDate(d.getDate()+amount);return localDay(d.getTime());}
+function learningMetrics(){
+  var days={};store.history.forEach(function(a){days[localDay(a.ts)]=(days[localDay(a.ts)]||0)+1;});
+  var today=localDay(Date.now()),count=days[today]||0,anchor=days[today]?today:(days[dayShift(today,-1)]?dayShift(today,-1):null),streak=0;
+  if(anchor){var cursor=anchor;while(days[cursor]){streak++;cursor=dayShift(cursor,-1);}}
+  var goal=store.dailyGoal||1;
+  return {today:today,count:count,goal:goal,streak:streak,done:count>=goal,pct:Math.min(100,Math.round(count/goal*100))};
+}
+function learningPanelHTML(){
+  var m=learningMetrics(),buttons=[1,2,3].map(function(n){return '<button class="btn '+(m.goal===n?'primary':'ghost')+' small" type="button" data-act="goal" data-goal="'+n+'" aria-pressed="'+(m.goal===n)+'">'+n+(n===1?' sessão':' sessões')+'</button>';}).join('');
+  return '<section class="card learn-panel"><div class="hhead"><div><h3>Meta diária</h3><p class="meta">Conclua simulados ou treinos para contar seu dia de estudo.</p></div><span class="pill '+(m.done?'ok':'flat')+'">'+(m.done?'Meta concluída':'Em andamento')+'</span></div>'+
+    '<div class="progress-row"><div class="stat"><b>'+m.count+'/'+m.goal+'</b><span>Treinos hoje</span></div><div class="stat"><b>🔥 '+m.streak+'</b><span>Dias seguidos</span></div></div>'+
+    '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+m.pct+'" aria-label="Meta diária '+m.pct+'% concluída"><i style="width:'+m.pct+'%"></i></div>'+
+    '<div class="goal-controls"><span class="meta">Sua meta:</span>'+buttons+'</div></section>';
+}
+function personalRankingHTML(){
+  var top=store.history.slice().sort(function(a,b){return b.pct-a.pct||b.correct-a.correct||b.ts-a.ts;}).slice(0,5);
+  if(!top.length)return '<div class="card"><h3>Ranking pessoal</h3><p class="meta">Seu quadro de melhores resultados aparece depois do primeiro treino.</p></div>';
+  return '<div class="card"><h3>Ranking pessoal · Top 5</h3><p class="meta">Seus melhores resultados neste navegador — não é um ranking público entre alunos.</p><ol class="personal-rank">'+top.map(function(a,i){return '<li><span class="rankpos">'+(i+1)+'º</span><span>'+modeName(a)+'<small>'+fmtDate(a.ts)+'</small></span><b>'+a.correct+'/'+a.total+' · '+Math.round(a.pct)+'%</b></li>';}).join('')+'</ol></div>';
+}
+function errorReportHTML(list){
+  var stats=topicStats(list),keys=Object.keys(stats).filter(function(k){return stats[k].n>0;});
+  if(!keys.length)return '<div class="card"><h3>Relatório de dificuldades</h3><p class="meta">Finalize um treino para descobrir quais assuntos precisam de mais atenção.</p></div>';
+  keys.sort(function(a,b){return (stats[b].n-stats[b].ok)/stats[b].n-(stats[a].n-stats[a].ok)/stats[a].n;});
+  var weak=keys.slice(0,3);
+  return '<div class="card"><h3>Relatório · assuntos com mais erros</h3><p class="meta">Ordenado pela taxa de erro; entre parênteses, quantidade de respostas erradas.</p><div class="rows">'+weak.map(function(k){var n=stats[k].n,wrong=n-stats[k].ok,rate=Math.round(wrong/n*100);return '<div class="trow"><div class="nm">'+TEMAS[k]+'</div><div class="bar" role="img" aria-label="'+rate+'% de erros"><i style="width:'+rate+'%"></i></div><div class="pc">'+rate+'% <span style="color:var(--muted);font-weight:500">('+wrong+' erros)</span></div></div>';}).join('')+'</div></div>';
+}
+
+function topicBars(stats,flagWeak){
+  var keys=Object.keys(stats).filter(function(k){return stats[k].n>0;});
+  keys.sort(function(a,b){return stats[a].ok/stats[a].n-stats[b].ok/stats[b].n;});
+  var weak=flagWeak&&keys.length>1&&stats[keys[0]].n>=3?keys[0]:null;
+  return '<div class="rows">'+keys.map(function(k){
+    var p=Math.round(stats[k].ok/stats[k].n*100);
+    return '<div class="trow"><div class="nm">'+TEMAS[k]+(k===weak?' <span class="pill warn">Revisar primeiro</span>':'')+'</div><div class="bar" role="img" aria-label="'+p+'% de acerto"><i style="width:'+p+'%"></i></div><div class="pc">'+p+'% <span style="color:var(--muted);font-weight:500">('+stats[k].ok+'/'+stats[k].n+')</span></div></div>';
+  }).join("")+'</div>';
+}
+function reviewHTML(att){
+  var items=att.ans.filter(function(p){return byId[p[0]]&&p[1]!==byId[p[0]].a;});
+  if(!items.length) return '<p><b class="right">Nenhum erro neste simulado.</b></p>';
+  return items.map(function(p){
+    var q=byId[p[0]];
+    return '<div class="rev"><div style="font-weight:600">'+q.q+'</div>'+
+      '<div class="l wrong"><b>Você marcou:</b> '+(p[1]<0?'sem resposta':LET[p[1]]+') '+q.o[p[1]])+'</div>'+
+      '<div class="l right"><b>Correta:</b> '+LET[q.a]+') '+q.o[q.a]+'</div>'+
+      '<div class="exp">'+q.e+'</div></div>';
+  }).join("");
+}
+
+/* telas */
+function homeHTML(){
+  var h=store.history,n=h.length,prog="";
+  if(n){
+    var best=Math.max.apply(null,h.map(function(a){return a.pct;}));
+    prog='<div class="progress-row"><div class="stat"><b>'+n+'</b><span>Simulados feitos</span></div><div class="stat"><b>'+Math.round(h[n-1].pct)+'%</b><span>Último resultado</span></div><div class="stat"><b>'+Math.round(best)+'%</b><span>Melhor resultado</span></div></div>';
+  }
+  return '<div class="hero"><div><div class="hello">Olá, <b>'+esc(store.name||"")+'</b>!<button class="link" type="button" data-act="logout">Trocar nome</button></div><h1>Simulados Detran-CE 2026</h1><p>Treine no formato da prova teórica do Detran do Ceará, com 30 questões de múltipla escolha sorteadas de um banco de treino com ' + Q.length + ' questões, cobrindo legislação, sinalização, direção defensiva e segurança viária. Acompanhe sua evolução a cada tentativa.</p></div>'+
+    '<div class="sign"><b>20/30</b><span>acertos mínimos na prova teórica</span></div></div>'+prog+
+    learningPanelHTML()+personalRankingHTML()+'<div class="modes">'+
+    '<div class="mode main"><div class="mnum">30<small>questões</small></div><div><h3>Simulado completo</h3><p>Sorteadas de '+Q.length+' questões autorais de treino, alinhadas ao CTB e aos temas de formação. Meta oficial: 20 acertos em 30.</p></div><button class="btn primary" type="button" data-act="start" data-mode="completo">Começar simulado</button></div>'+
+    '<div class="mode"><div class="mnum">10<small>questões</small></div><div><h3>Treino rápido</h3><p>Uma revisão de poucos minutos. Meta de treino: 7 acertos em 10.</p></div><button class="btn ghost" type="button" data-act="start" data-mode="rapido">Começar treino</button></div>'+
+    '</div>'+
+    '<p style="color:var(--muted)">Quer revisar antes de treinar? Abra o <a class="linkbtn" href="#estudo">Material de estudo</a>, com o resumo de cada matéria e treino por matéria.</p>';
+}
+function examHTML(){
+  var ex=session.exam,total=ex.ids.length,q=byId[ex.ids[ex.idx]],cur=ex.answers[q.id],ok=cur!==undefined,last=ex.idx===total-1;
+  var done=ex.idx+(ok?1:0);
+  var opts=q.o.map(function(t,i){return '<button class="opt'+(cur===i?' sel':'')+'" type="button" data-act="pick" data-i="'+i+'" aria-pressed="'+(cur===i)+'"><span class="ltr">'+LET[i]+'</span><span class="tx">'+t+'</span></button>';}).join("");
+  var tail=ex.quit?'<div class="notice" role="alert"><span>Sair do simulado? As respostas desta tentativa serão perdidas.</span><span style="display:flex;gap:10px"><button class="btn primary small" type="button" data-act="confirmquit">Sair</button><button class="btn ghost small" type="button" data-act="cancelconfirm">Continuar</button></span></div>':'<div class="quitrow"><button class="btn ghost small" type="button" data-act="quit">Sair do simulado</button></div>';
+  return '<div class="qhead"><div class="qcount" role="status" aria-live="polite">Questão '+(ex.idx+1)+' de '+total+'</div><span class="topic">'+TEMAS[q.t]+'</span></div>'+
+    '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+done+'" aria-label="Progresso do simulado"><i style="width:'+(done/total*100)+'%"></i></div>'+
+    '<p class="qtext">'+esc(q.q)+'</p><div class="opts">'+opts+'</div>'+
+    '<div class="go"><button class="btn primary big" type="button" data-act="'+(last?'finish':'next')+'"'+(ok?'':' disabled')+'>'+(last?'Finalizar simulado':'Próxima questão')+'</button><p class="hint">'+(ok?'Ao avançar, você não pode voltar a esta questão.':'Escolha uma alternativa para continuar. Não é possível voltar depois.')+'</p></div>'+tail;
+}
+function resultHTML(id){
+  var h=store.history,idx=-1;
+  for(var i=0;i<h.length;i++){if(h[i].id===id){idx=i;break;}}
+  if(idx<0){session.resultId=null;return homeHTML();}
+  var a=h[idx],ok=passed(a),need=a.total===30?20:Math.ceil(a.total*0.7),prev=idx>0?h[idx-1]:null;
+  var verdict=ok?'<span class="pill ok">Aprovado</span>':'<span class="pill no">Reprovado</span>';
+  var line=ok?'Você passou do mínimo de '+need+' acertos.':'Faltaram '+(need-a.correct)+' acertos para chegar aos '+need+' necessários.';
+  var cmp=prev?'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+deltaPill(a.pct-prev.pct)+'<span class="meta" style="color:var(--muted)">em relação ao simulado anterior ('+Math.round(prev.pct)+'%)</span></div>':'<p style="color:var(--muted)">Este é o seu primeiro simulado. Faça outro para ver se você está melhorando.</p>';
+  return '<h2>Resultado</h2><div class="score"><div class="n">'+a.correct+'<small>/'+a.total+'</small></div><div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'+verdict+'<b style="font-family:var(--f-display);font-size:1.6rem">'+Math.round(a.pct)+'%</b></div><p>'+line+'</p></div></div>'+cmp+
+    '<div class="actions"><div class="grp"><button class="btn primary" type="button" data-act="newsim">Novo simulado</button><a class="btn ghost" href="#evolucao">Ver evolução</a></div></div>'+
+    '<h3>Desempenho por tema</h3>'+topicBars(topicStats([a]),false)+
+    '<h3>Questões para revisar</h3><div class="rows">'+reviewHTML(a)+'</div>';
+}
+function histHTML(){
+  var h=store.history;
+  if(!h.length) return '<h2>Histórico</h2>'+(session.justCleared?'<p role="status"><span class="pill ok">Histórico apagado</span></p>':'')+'<div class="card empty"><h3>Nenhum simulado ainda</h3><p class="meta">Quando você terminar um simulado, ele aparece aqui com nota, data e revisão dos erros.</p><a class="btn primary" href="#simulado" data-act="home">Fazer um simulado</a></div>';
+  var rows=h.map(function(a,i){
+    var prev=i>0?h[i-1]:null;
+    return '<details class="h"><summary><div class="hmain"><b>'+a.correct+'/'+a.total+' · '+Math.round(a.pct)+'%</b><span>#'+(i+1)+' · '+modeName(a)+' · '+fmtDate(a.ts)+'</span></div><div class="hside">'+(prev?deltaPill(a.pct-prev.pct):'')+(passed(a)?'<span class="pill ok">Aprovado</span>':'<span class="pill no">Reprovado</span>')+'</div></summary><div class="body"><h3>Questões erradas</h3>'+reviewHTML(a)+'</div></details>';
+  }).reverse().join("");
+  var head='<div class="hhead"><h2>Histórico</h2>'+(session.confirmClear?'':'<button class="btn ghost small" type="button" data-act="clearask">Limpar histórico</button>')+'</div>';
+  var ask=session.confirmClear?'<div class="notice" role="alertdialog" aria-labelledby="ccq"><div><b id="ccq" style="font-size:1.15rem">Deseja apagar seu histórico?</b><p style="color:var(--muted);font-size:.92rem">Isso apaga todos os simulados feitos e as porcentagens. Não dá para desfazer.</p></div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn primary small" type="button" data-act="clearyes">Sim, apagar</button><button class="btn ghost small" type="button" data-act="clearno">Não, manter</button></span></div>':'';
+  return head+ask+'<p style="color:var(--muted)">'+h.length+' simulado'+(h.length>1?'s':'')+' neste navegador. Abra um item para revisar os erros.</p><div class="hist">'+rows+'</div>';
+}
+function chartSVG(list,offset){
+  var W=640,H=260,pl=40,pr=16,pt=18,pb=34,n=list.length;
+  function X(i){return n===1?pl+(W-pl-pr)/2:pl+i*(W-pl-pr)/(n-1);}
+  function Y(p){return pt+(100-p)/100*(H-pt-pb);}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Gráfico com a porcentagem de acertos em cada simulado">';
+  [0,50,66.7,100].forEach(function(t){
+    var y=Y(t),pass=t===66.7;
+    s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" stroke="var(--'+(pass?'fg':'line')+')" stroke-width="'+(pass?1.5:1)+'"'+(pass?' stroke-dasharray="6 5"':'')+'/>';
+    s+='<text class="'+(pass?'axb':'ax')+'" x="'+(pl-8)+'" y="'+(y+4)+'" text-anchor="end">'+(pass?'66,7':t)+'%</text>';
+  });
+  var pts=list.map(function(a,i){return X(i)+","+Y(a.pct);}).join(" ");
+  if(n>1) s+='<polyline points="'+pts+'" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+  list.forEach(function(a,i){
+    var x=X(i),y=Y(a.pct);
+    s+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="#00C878" stroke="var(--fg)" stroke-width="2"/>';
+    if(n<=12){var ty=y<pt+14?y+22:y-13;s+='<text class="vl" x="'+x+'" y="'+ty+'" text-anchor="middle">'+Math.round(a.pct)+'</text>';}
+    if(n<=12||i%2===0||i===n-1) s+='<text class="ax" x="'+x+'" y="'+(H-10)+'" text-anchor="middle">#'+(offset+i+1)+'</text>';
+  });
+  return s+'</svg>';
+}
+function evoHTML(){
+  var h=store.history,n=h.length;
+  if(n<2) return '<h2>Evolução</h2><div class="card empty"><h3>'+(n===0?'Nenhum simulado ainda':'Falta mais um simulado')+'</h3><p class="meta">'+(n===0?'Faça pelo menos dois simulados para comparar o seu desempenho.':'Você fez 1 simulado ('+Math.round(h[0].pct)+'%). Com o segundo, o APROVA MAX compara os dois e mostra se você melhorou ou regrediu.')+'</p><a class="btn primary" href="#simulado" data-act="home">Fazer um simulado</a></div>'+errorReportHTML(h)+personalRankingHTML();
+  var last=h[n-1],prev=h[n-2],d=last.pct-prev.pct,r=Math.round(d);
+  var word=r>0?"Melhorou":(r<0?"Regrediu":"Estável"),sign=r>0?"+":"";
+  var m=Math.min(n,10),rec=h.slice(n-m),sx=0,sy=0,sxy=0,sxx=0;
+  rec.forEach(function(a,i){sx+=i;sy+=a.pct;sxy+=i*a.pct;sxx+=i*i;});
+  var slope=m>=3?(m*sxy-sx*sy)/(m*sxx-sx*sx):null;
+  var tw="—",ts="Faça 3 simulados para calcular a tendência.";
+  if(slope!==null){tw=slope>=1?"Em alta":(slope<=-1?"Em queda":"Estável");ts=(slope>0?"+":"")+num(slope,1)+" pts por simulado, nos últimos "+m;}
+  var k=Math.min(n,5),avg=h.slice(n-k).reduce(function(s,a){return s+a.pct;},0)/k;
+  var best=Math.max.apply(null,h.map(function(a){return a.pct;}));
+  var shown=h.slice(-20),off=n-shown.length,approved=h.filter(passed).length;
+  return '<h2>Evolução</h2>'+
+  '<div class="cards3">'+
+  '<div class="card evo"><span class="lbl">Último x anterior</span><b>'+word+'</b><p>'+(r===0?'Mesma nota do simulado anterior ('+Math.round(last.pct)+'%).':sign+r+' pontos percentuais ('+Math.round(prev.pct)+'% para '+Math.round(last.pct)+'%).')+'</p></div>'+
+  '<div class="card evo"><span class="lbl">Tendência</span><b>'+tw+'</b><p>'+ts+'</p></div>'+
+  '<div class="card evo"><span class="lbl">Média dos últimos '+k+'</span><b>'+Math.round(avg)+'%</b><p>Melhor nota: '+Math.round(best)+'%. Aprovações: '+approved+' de '+n+'.</p></div>'+
+  '</div>'+
+  '<div class="card"><h3>Nota em cada simulado</h3><div class="chartbox">'+chartSVG(shown,off)+'</div><p class="meta">A linha tracejada marca a referência de 20 acertos em 30 (66,7%).</p></div>'+
+  '<div class="card"><h3>Acertos por tema, em todos os simulados</h3>'+topicBars(topicStats(h),true)+'</div>'+errorReportHTML(h)+personalRankingHTML();
+}
+
+var STUDY={
+H:["Idade mínima para se habilitar: <b>18 anos completos</b>.","<b>Categoria A</b>: veículos motorizados de duas ou três rodas (motos), com ou sem carro lateral.","<b>Categoria B</b>: veículos com peso bruto total (PBT) de até <b>3.500 kg</b> e lotação de até 8 lugares, sem contar o condutor.","<b>Permissão para Dirigir (PPD)</b>: vale <b>1 ano</b>. Sem infração grave ou gravíssima e sem reincidência em média, o condutor recebe a CNH definitiva.","<b>Validade da CNH</b>: 10 anos até os 49 anos, 5 anos de 50 a 69 e 3 anos a partir dos 70."],
+I:["<b>Pontos</b>: leve 3, média 4, grave 5 e gravíssima 7.","<b>Suspensão por pontos</b> (em 12 meses): 20 pontos com duas ou mais gravíssimas, 30 com uma gravíssima e 40 sem nenhuma gravíssima.","<b>Gravíssimas</b> que aparecem nas questões: avançar o sinal vermelho; dirigir sem CNH, Permissão ou ACC (o veículo é retido); dirigir sob álcool (multa e suspensão); passar mais de 50% do limite de velocidade (multa e suspensão); transportar criança sem dispositivo de retenção; não dar passagem ao pedestre na faixa.","A <b>recusa ao teste do bafômetro</b> também é penalizada."],
+C:["<b>Velocidade sem placa</b>: via local 30 km/h, coletora 40, arterial 60 e via de trânsito rápido 80.","<b>Cinto de segurança</b>: obrigatório para o condutor e todos os passageiros, em qualquer via.","<b>Crianças menores de 10 anos</b> com menos de 1,45 m: banco traseiro, em dispositivo de retenção adequado.","<b>Moto</b>: capacete afivelado para condutor e passageiro, farol baixo aceso dia e noite e as duas mãos no guidom (exceto para sinais de braço).","<b>Ultrapassagem</b>: pela esquerda, sinalizando com a luz indicadora de direção.","<b>Preferência</b>: na rotatória, quem já circula nela. Em cruzamento sem sinalização e sem fluxo de rodovia ou rotatória, quem vem pela direita do condutor. Na faixa de pedestres, o pedestre.","<b>Iluminação</b>: farol baixo à noite; de dia, em túneis e sob chuva, neblina ou cerração. Em rodovia de pista simples fora do perímetro urbano, automóveis sem DRL também devem usar luz baixa.","<b>Buzina</b>: só para advertências necessárias a evitar acidentes."],
+S:["<b>Placa R-1 (PARE)</b>: octogonal, fundo vermelho.","<b>Placa R-2 (Dê a preferência)</b>: triangular com vértice para baixo, borda vermelha e fundo branco.","<b>Regulamentação</b>: em geral circular com borda vermelha. <b>Advertência</b>: losango amarelo.","<b>Linha dupla contínua amarela</b>: separa fluxos opostos e proíbe ultrapassar nos dois sentidos. <b>Linha branca</b> separa fluxos do mesmo sentido, e se for tracejada permite mudar de faixa.","<b>Semáforo</b>: amarelo fixo é atenção (pare, salvo risco na frenagem). Amarelo piscante pede cuidado. Avançar o vermelho é infração gravíssima.","<b>Ambulância com sirene</b>: desloque-se para a direita e pare, se preciso, dando passagem."],
+D:["<b>Direção defensiva</b>: prever situações de risco e evitar acidentes, mesmo com erros dos outros e condições adversas.","<b>Antes de sair</b>: ajuste banco, espelhos e cinto.","<b>Pista molhada</b>: reduza a velocidade e aumente a distância do veículo da frente.","<b>Aquaplanagem</b>: tire o pé do acelerador e segure o volante, sem freadas ou giros bruscos.","A <b>distância de frenagem</b> aumenta com velocidade maior, pista molhada e pneus gastos.","<b>Neblina</b>: farol baixo e, se houver, farol de neblina. <b>Cruzando com outro veículo à noite</b>: troque a luz alta pela baixa.","<b>Pane</b>: sinalize com triângulo e pisca-alerta. <b>Sono</b>: pare em local seguro e descanse."],
+P:["<b>Telefones</b>: SAMU 192, Bombeiros 193, Polícia Militar 190 e Polícia Rodoviária Federal 191.","<b>Primeira atitude</b> em acidente com vítimas: sinalizar o local e acionar o socorro.","<b>Motociclista acidentado</b>: não retire o capacete, salvo se for indispensável para liberar as vias aéreas.","<b>Hemorragia externa</b>: comprima o ferimento com um pano limpo."],
+M:["<b>Óleo lubrificante usado</b>: entregue em ponto de coleta, nunca no solo ou no esgoto.","<b>Fumaça preta</b> no escapamento indica regulagem ou manutenção inadequada e mais poluição.","<b>Vaga de idoso ou pessoa com deficiência</b>: estacionar sem a credencial é infração.","<b>Lixo atirado pela janela</b> é infração e agride o meio ambiente.","A queima de combustíveis fósseis libera <b>dióxido de carbono (CO2)</b>, principal gás do efeito estufa emitido pelos veículos."],
+X:["<b>Luz vermelha de óleo</b>: pressão baixa. Pare em local seguro e desligue o motor.","<b>Luz da bateria</b>: problema no sistema de carga elétrica.","<b>Pneus</b>: calibre com eles frios.","<b>ABS</b>: evita o travamento das rodas na frenagem e mantém o controle da direção.","<b>Nível do óleo</b>: confira com o veículo em local plano e o motor desligado há alguns minutos."]
+};
+function studyHTML(){
+  var busy=!!session.exam;
+  var intro='<h2>Material de estudo</h2><p style="color:var(--muted);max-width:60ch">Cada matéria traz o resumo do que os simulados cobram, seguido de todas as perguntas do banco com a resposta certa e a explicação. Leia, depois treine só aquela matéria.</p>';
+  var warn=busy?'<div class="notice" role="status"><span>Você tem um simulado em andamento. Termine ou saia dele para treinar por matéria.</span><a class="btn primary small" href="#simulado">Voltar ao simulado</a></div>':'';
+  var list=Object.keys(TEMAS).map(function(k){
+    var qs=Q.filter(function(q){return q.t===k;});
+    var pts=STUDY[k].map(function(t){return '<li>'+t+'</li>';}).join("");
+    var qa=qs.map(function(q){return '<div class="rev"><div style="font-weight:600">'+q.q+'</div><div class="l right"><b>Resposta:</b> '+LET[q.a]+') '+q.o[q.a]+'</div><div class="exp">'+q.e+'</div></div>';}).join("");
+    return '<details class="h study"><summary><div class="hmain"><b>'+TEMAS[k]+'</b><span>'+qs.length+' questões no banco</span></div><span class="pill warn">Estudar</span></summary><div class="body"><h3>O que você precisa saber</h3><ul class="pts">'+pts+'</ul><div><button class="btn primary small" type="button" data-act="starttopic" data-t="'+k+'"'+(busy?' disabled':'')+'>Treinar esta matéria</button></div><h3>Perguntas e respostas</h3>'+qa+'</div></details>';
+  }).join("");
+  return intro+warn+'<div class="hist">'+list+'</div>';
+}
+
+var AVATAR_MARKUP = '<div class="avatar-pick" role="group" aria-label="Escolha seu avatar"><button class="avatar-choice" type="button" data-avatar="0" aria-label="Selecionar este avatar" aria-pressed="true"><img src="data:image/webp;base64,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" alt="Avatar disponível"><span class="avatar-check" aria-hidden="true">✓</span></button><button class="avatar-choice" type="button" data-avatar="1" aria-label="Selecionar este avatar" aria-pressed="false"><img src="data:image/webp;base64,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" alt="Avatar disponível"><span class="avatar-check" aria-hidden="true">✓</span></button><button class="avatar-choice" type="button" data-avatar="2" aria-label="Selecionar este avatar" aria-pressed="false"><img src="data:image/webp;base64,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" alt="Avatar disponível"><span class="avatar-check" aria-hidden="true">✓</span></button><button class="avatar-choice" type="button" data-avatar="3" aria-label="Selecionar este avatar" aria-pressed="false"><img src="data:image/webp;base64,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" alt="Avatar disponível"><span class="avatar-check" aria-hidden="true">✓</span></button></div>';
+function loginHTML(){
+  var chosen=Math.max(0,Math.min(3,Number(store.avatar)||0));
+  var avatars=AVATAR_MARKUP.replace(/<button class="avatar-choice" type="button" data-avatar="(\d)"[^>]*>/g,function(tag,n){
+    return '<button class="avatar-choice" type="button" data-avatar="'+n+'" aria-label="Selecionar este avatar" aria-pressed="'+(Number(n)===chosen?'true':'false')+'">';
+  });
+  return '<div class="login"><div class="login-card"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8.5" y="8.5" width="31" height="31" rx="5" transform="rotate(45 24 24)" fill="#0B0B0A" stroke="var(--line-strong)" stroke-width="1.5"/><rect x="11.5" y="11.5" width="25" height="25" rx="3" transform="rotate(45 24 24)" fill="#00C878"/><path d="M15.5 25 L21.5 31 L33 18" fill="none" stroke="#0B0B0A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+    '<h2>Bem-vindo ao APROVA MAX</h2><p style="color:var(--muted)">Escolha seu avatar e personalize seu acesso.</p>'+
+    '<form id="loginForm" novalidate><label style="font-weight:600">Escolha seu usuário</label>'+avatars+
+    '<label for="nameIn" style="font-weight:600">Como você quer ser chamado?</label><input class="field" id="nameIn" name="nome" type="text" maxlength="20" autocomplete="nickname" placeholder="Seu nome ou apelido" value="'+esc(store.name||"")+'" aria-describedby="nameErr"><div class="err" id="nameErr" role="alert"></div><button class="btn primary big" type="submit">Entrar</button></form>'+
+    '<p class="hint">Seu avatar e nome ficam salvos só neste navegador.</p></div></div>';
+}
+function updateProfileAvatar(){
+  var slot=document.getElementById("profileAvatar");
+  if(!slot)return;
+  if(!store.name){slot.hidden=true;slot.innerHTML="";return;}
+  var idx=Math.max(0,Math.min(3,Number(store.avatar)||0));
+  var marker='data-avatar="'+idx+'"';
+  var part=AVATAR_MARKUP.split(marker)[1]||"";
+  var match=part.match(/<img src="([^"]+)"/);
+  if(match){slot.innerHTML='<img src="'+match[1]+'" alt="Seu avatar">';slot.hidden=false;}
+}
+function splashHTML(){
+  return '<div class="splash" role="status" aria-live="polite"><svg viewBox="0 0 48 48" aria-hidden="true"><g class="dia"><rect x="8.5" y="8.5" width="31" height="31" rx="5" transform="rotate(45 24 24)" fill="#0B0B0A" stroke="var(--line-strong)" stroke-width="1.5"/><rect x="11.5" y="11.5" width="25" height="25" rx="3" transform="rotate(45 24 24)" fill="#00C878"/></g><path class="chk" pathLength="1" d="M15.5 25 L21.5 31 L33 18" fill="none" stroke="#0B0B0A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+    '<div class="splash-txt">Bora, <b>'+esc(store.name||"")+'</b>!</div><div class="sub">Preparando seus simulados</div><div class="load" aria-hidden="true"><i></i></div></div>';
+}
+
+/* controle */
+function setTheme(t){
+  if(t){document.documentElement.setAttribute("data-theme",t);}
+  var cur=document.documentElement.getAttribute("data-theme");
+  var dark=cur?cur==="dark":(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches);
+  var ic=document.getElementById("themeIcon"),tx=document.getElementById("themeTxt");
+  ic.innerHTML=dark?'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>':'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+  tx.textContent=dark?"Tema claro":"Tema escuro";
+  return dark;
+}
+function route(){var h=(location.hash||"#simulado").slice(1);return ["simulado","estudo","historico","evolucao"].indexOf(h)>-1?h:"simulado";}
+function render(focusSel){
+  document.body.classList.toggle("gate",session.stage!=="app");
+  if(session.stage!=="app"){
+    app.innerHTML=session.stage==="login"?loginHTML():splashHTML();
+    if(focusSel){var g=app.querySelector(focusSel);if(g)g.focus({preventScroll:true});}
+    return;
+  }
+  updateProfileAvatar();
+  var r=route();
+  Array.prototype.forEach.call(document.querySelectorAll(".nav a"),function(a){if(a.getAttribute("data-r")===r)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
+  var html;
+  if(r==="estudo") html=studyHTML();
+  else if(r==="historico") html=histHTML();
+  else if(r==="evolucao") html=evoHTML();
+  else html=session.exam?examHTML():(session.resultId?resultHTML(session.resultId):homeHTML());
+  app.innerHTML=html;
+  if(storageWarn) app.insertAdjacentHTML("afterbegin",'<div class="storage-alert" role="status"><b>Atenção:</b> o navegador não permitiu salvar seus dados. Seu progresso pode ser perdido ao fechar ou atualizar esta página. Verifique as permissões de armazenamento do navegador.</div>');
+  if(focusSel){var el=app.querySelector(focusSel);if(el)el.focus({preventScroll:true});}
+}
+function toTop(){var t=document.getElementById("top");if(t&&t.scrollIntoView)t.scrollIntoView();}
+function finishExam(){
+  var ex=session.exam;
+  var ans=ex.ids.map(function(id){var c=ex.answers[id];return [id,c===undefined?-1:c];});
+  var correct=ans.filter(function(p){return p[1]===byId[p[0]].a;}).length;
+  var att={id:Date.now(),ts:Date.now(),mode:ex.mode,tema:ex.tema||null,total:ex.ids.length,correct:correct,pct:correct/ex.ids.length*100,ans:ans};
+  store.history.push(att);save();
+  session.exam=null;session.resultId=att.id;session.justCleared=false;
+}
+
+app.addEventListener("click",function(e){
+  var av=e.target.closest("[data-avatar]");
+  if(!av)return;
+  store.avatar=Number(av.getAttribute("data-avatar"));save();
+  app.querySelectorAll("[data-avatar]").forEach(function(el){el.setAttribute("aria-pressed",el===av?"true":"false");});
+});
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]");if(!b)return;
+  var act=b.getAttribute("data-act"),ex=session.exam;
+  if(act==="theme"){var dark=setTheme();var next=dark?"light":"dark";setTheme(next);store.theme=next;save();return;}
+  if(act==="home"){session.resultId=null;return;}
+  if(act==="logout"){session.exam=null;session.resultId=null;session.stage="login";render("#nameIn");return;}
+  if(act==="goal"){
+    var goal=Number(b.getAttribute("data-goal"));if(goal>=1&&goal<=3){store.dailyGoal=goal;save();render();}return;
+  }
+  if(act==="start"){
+    var mode=b.getAttribute("data-mode"),size=mode==="completo"?30:10;
+    session.exam={mode:mode,ids:shuffle(Q.map(function(q){return q.id;})).slice(0,size),answers:{},idx:0,quit:false};
+    session.resultId=null;render();toTop();return;
+  }
+  if(act==="starttopic"){
+    if(session.exam)return;
+    var tk=b.getAttribute("data-t");
+    var pool=Q.filter(function(q){return q.t===tk;}).map(function(q){return q.id;});
+    if(!pool.length)return;
+    session.exam={mode:"tema",tema:tk,ids:shuffle(pool).slice(0,Math.min(10,pool.length)),answers:{},idx:0,quit:false};
+    session.resultId=null;
+    if(location.hash!=="#simulado"){location.hash="#simulado";}
+    render();toTop();return;
+  }
+  if(act==="newsim"){session.resultId=null;render();toTop();return;}
+  if(act==="clearask"){session.confirmClear=true;render('[data-act="clearno"]');return;}
+  if(act==="clearno"){session.confirmClear=false;render();return;}
+  if(act==="clearyes"){store.history=[];save();session.confirmClear=false;session.resultId=null;session.justCleared=true;render();return;}
+  if(!ex)return;
+  var qid=ex.ids[ex.idx];
+  if(act==="pick"){var i=+b.getAttribute("data-i");ex.answers[qid]=i;render('[data-act="pick"][data-i="'+i+'"]');return;}
+  if(act==="next"){if(ex.answers[qid]===undefined)return;if(ex.idx<ex.ids.length-1){ex.idx++;render();toTop();}return;}
+  if(act==="finish"){if(ex.answers[qid]===undefined)return;finishExam();render();toTop();return;}
+  if(act==="quit"){ex.quit=true;render('[data-act="confirmquit"]');return;}
+  if(act==="cancelconfirm"){ex.quit=false;render();return;}
+  if(act==="confirmquit"){session.exam=null;render();toTop();return;}
+});
+function enterWithName(e){
+  if(e)e.preventDefault();
+  if(session.stage!=="login")return;
+  var inp=document.getElementById("nameIn"),err=document.getElementById("nameErr");
+  var v=inp?(inp.value||"").replace(/\s+/g," ").trim():"";
+  if(!v){if(err)err.textContent="Digite como você quer ser chamado.";if(inp)inp.focus();return;}
+  store.name=v.slice(0,20);if(!Number.isInteger(Number(store.avatar)))store.avatar=0;save();
+  session.stage="splash";render();
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  setTimeout(function(){
+    session.stage="app";
+    if(location.hash!=="#simulado"){location.hash="#simulado";}
+    render();
+    app.classList.add("enter");
+    setTimeout(function(){app.classList.remove("enter");},800);
+  },reduce?300:1100);
+}
+/* Liga o formulário diretamente ao app, com fallback no clique do botão. */
+app.addEventListener("submit",function(e){if(e.target&&e.target.id==="loginForm")enterWithName(e);});
+app.addEventListener("click",function(e){
+  var btn=e.target.closest('#loginForm button[type="submit"]');
+  if(btn){e.preventDefault();enterWithName(e);}
+});
+window.addEventListener("hashchange",function(){if(session.stage==="app")render();});
+
+if(store.theme==="light"||store.theme==="dark") setTheme(store.theme); else setTheme();
+render(session.stage==="login"?"#nameIn":undefined);
+})();
+</script>
+
+</body></html>
